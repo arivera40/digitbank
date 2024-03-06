@@ -1,4 +1,4 @@
-package com.org.digitbank.security.config;
+package com.org.digitbank.service;
 
 import java.security.Key;
 import java.util.Date;

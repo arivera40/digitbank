@@ -1,4 +1,4 @@
-package com.org.digitbank.security.config;
+package com.org.digitbank.security;
 
 import java.io.IOException;
 
@@ -11,6 +11,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.org.digitbank.service.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,19 +36,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
+        System.out.println(authHeader);
         // Check if we have the JWT token.
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        	System.out.println("Does not contain header.");
             filterChain.doFilter(request, response);
             return;
         }
 
         // Extract token from authentication header.
         jwt = authHeader.substring(7);
-
+        System.out.println("userEmail = " + jwt);
         // Extract userEmail from token.
         userEmail = jwtService.extractUsername(jwt);
-
-        // Validate user if a user is not already conntected.
+        
+        // Validate user if a user is not already connected.
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Check if user exists in database.
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
@@ -58,6 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            	System.out.println("Sets token inside SecurityContextHolder");
             }
         }
         // Pass to the next filter.
