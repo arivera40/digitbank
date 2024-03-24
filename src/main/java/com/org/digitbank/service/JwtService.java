@@ -9,6 +9,8 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.org.digitbank.model.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -43,16 +45,25 @@ public class JwtService {
                 .getBody();
     }
 
-    // Method to generate a JWT token for a user.
+ // Method to generate a JWT token for a user.
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        if (userDetails instanceof User) {
+            User user = (User) userDetails;
+            return generateToken(user.getUserId(), userDetails);
+        } else {
+            // Handle the case where UserDetails is not an instance of User
+            throw new IllegalArgumentException("UserDetails must be an instance of User");
+        }
     }
 
     // Method to generate a JWT token with extra claims for a user.
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts
+    public String generateToken(Integer userId, UserDetails userDetails) {        
+    	Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+    	
+    	return Jwts
                 .builder()
-                .setClaims(extraClaims)
+                .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Token expiration time (1 day)

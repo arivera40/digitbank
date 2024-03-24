@@ -1,6 +1,6 @@
 import React from "react";
 
-function NavigationMenu() {
+function NavigationMenu({ onNavItemClick }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="#">
@@ -19,22 +19,22 @@ function NavigationMenu() {
       </button>
       <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div className="navbar-nav">
-          <a className="nav-item nav-link active" href="#">
+          <a className="nav-item nav-link active" href="#" onClick={() => onNavItemClick("home")}>
             Home
           </a>
-          <a className="nav-item nav-link" href="#">
+          <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("account")}>
             Account
           </a>
-          <a className="nav-item nav-link" href="#">
+          <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("deposit")}>
             Deposit
           </a>
-          <a className="nav-item nav-link" href="#">
+          <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("withdraw")}>
             Withdraw
           </a>
-          <a className="nav-item nav-link" href="#">
+          <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("transfer")}>
             Transfer
           </a>
-          <a className="nav-item nav-link" href="#">
+          <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("zelle")}>
             Zelle
           </a>
         </div>

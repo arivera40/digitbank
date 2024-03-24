@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.org.digitbank.model.Account;
 import com.org.digitbank.model.AccountType;
-import com.org.digitbank.model.BankAccount;
 import com.org.digitbank.model.Role;
 import com.org.digitbank.model.User;
 import com.org.digitbank.payload.ApiResponse;
@@ -69,10 +69,10 @@ public class AuthenticationController {
 				registerRequest.getPassword());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		BankAccount account = BankAccount.builder().userId(userResult.getUserId()).accountType(AccountType.CHECKING)
+		Account account = Account.builder().userId(userResult.getUserId()).accountType(AccountType.CHECKING)
 				.balance(new BigDecimal(0)).build();
 		
-		BankAccount accountResult = accountRepository.save(account);
+		Account accountResult = accountRepository.save(account);
 
 		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
 	}

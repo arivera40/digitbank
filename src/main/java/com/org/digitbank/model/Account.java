@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class BankAccount {
+public class Account {
 	@Id
 	@GeneratedValue
 	private Integer accountId;

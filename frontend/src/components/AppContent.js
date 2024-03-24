@@ -1,14 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { request, setAuthHeader } from "../axios_helper";
 
 import HomeContent from "./HomeContent";
 import NavigationMenu from "./NavigationMenu";
 import AuthForm from "./AuthForm";
+import AccountContent from "./AccountContent";
 
 function AppContent() {
   const [componentToShow, setComponentToShow] = useState("login");
+  const [accounts, setAccounts] = useState([]);
 
+  useEffect(() => {
+    if (componentToShow === "home") {
+      fetchAccountData();
+    }
+  }, [componentToShow]);
+
+  useEffect(() => {
+    console.log("Accounts obtained: ", accounts);
+  }, [accounts]);
+
+  // Login with an existing user.
   const loginHandler = (event, email, password) => {
     event.preventDefault();
     request("POST", "/login", {
@@ -24,6 +37,7 @@ function AppContent() {
       });
   };
 
+  // Register new user.
   const registerHandler = (
     event,
     firstName,
@@ -54,15 +68,56 @@ function AppContent() {
       });
   };
 
+  // Create savings account.
+  const createSavingsHandler = () => {
+    request("POST", "/bank/createSavings")
+      .then((response) => {
+        console.log("Create Savings: Success");
+        console.log(response.data);
+
+        setAccounts(prevAccounts => [...prevAccounts, response.data]);
+        setComponentToShow("account");
+
+      })
+      .catch((error) => {
+        console.log("Create Savings: Fail");
+        console.error("Error creating savings account:", error);
+      })
+  }
+
+  // Fetch account data using the authenticated token.
+  const fetchAccountData = () => {
+    request("GET", "/bank/getAccounts")
+      .then((response) => {
+        console.log("Fetch accounts: Success");
+        console.log(response.data);
+        
+        setAccounts(response.data);
+      })
+      .catch((error) => {
+        console.log("Fetch accounts: Fail");
+        console.error("Error fetching account data:", error);
+      });
+  };
+
+  // Change component based on navigation menu item click.
+  const navigationHandler = (navMenu) => {
+    setComponentToShow(navMenu)
+  };
+
   return (
     <>
-      {componentToShow === "login" && (
+      {componentToShow === "login" ? (
         <AuthForm onLogin={loginHandler} onRegister={registerHandler} />
-      )}
-      {componentToShow === "home" && (
+      ) : (
         <>
-          <NavigationMenu />
-          <HomeContent />
+          <NavigationMenu onNavItemClick={navigationHandler} />
+          {componentToShow === "home" && <HomeContent createSavings={createSavingsHandler} />}
+          {componentToShow === "account" && <AccountContent accounts={accounts} />}
+          {componentToShow === "deposit" && <AccountContent accounts={accounts} />}
+          {componentToShow === "withdraw" && <AccountContent accounts={accounts} />}
+          {componentToShow === "transfer" && <AccountContent accounts={accounts} />}
+          {componentToShow === "zelle" && <AccountContent accounts={accounts} />}
         </>
       )}
     </>
