@@ -6,6 +6,7 @@ import HomeContent from "./HomeContent";
 import NavigationMenu from "./NavigationMenu";
 import AuthForm from "./AuthForm";
 import AccountContent from "./AccountContent";
+import DepositForm from "./DepositForm";
 
 function AppContent() {
   const [componentToShow, setComponentToShow] = useState("login");
@@ -85,6 +86,22 @@ function AppContent() {
       })
   }
 
+  // Deposit funds into an account.
+  const depositHandler = (account, amount) => {
+    request("POST", "/bank/deposit", {
+      toAccountId: account.accountId,
+      amount: amount,
+    })
+      .then((response) => {
+        console.log("Deposit: Success");
+        setComponentToShow("home");
+      })
+      .catch((error) => {
+        console.log("Deposit: Fail");
+        console.error("Error depositing funds into account:", error);
+      })
+  }
+
   // Fetch account data using the authenticated token.
   const fetchAccountData = () => {
     request("GET", "/bank/getAccounts")
@@ -114,7 +131,7 @@ function AppContent() {
           <NavigationMenu onNavItemClick={navigationHandler} />
           {componentToShow === "home" && <HomeContent createSavings={createSavingsHandler} />}
           {componentToShow === "account" && <AccountContent accounts={accounts} />}
-          {componentToShow === "deposit" && <AccountContent accounts={accounts} />}
+          {componentToShow === "deposit" && <DepositForm onDeposit={depositHandler} accounts={accounts} />}
           {componentToShow === "withdraw" && <AccountContent accounts={accounts} />}
           {componentToShow === "transfer" && <AccountContent accounts={accounts} />}
           {componentToShow === "zelle" && <AccountContent accounts={accounts} />}
