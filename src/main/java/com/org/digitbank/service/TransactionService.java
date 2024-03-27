@@ -41,9 +41,27 @@ public class TransactionService {
 			accountRepository.save(account);
 			
 			return true;
-		} else {
-			return false;
 		}
+		return false;
+	}
+	
+	public boolean performWithdraw(Transaction transaction) {
+		System.out.println(transaction.getAmount());
+		System.out.println(transaction.getFromAccountId());
+		Optional<Account> optionalAccount = accountRepository.findById(transaction.getFromAccountId());
+		
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			
+			BigDecimal currentBalance = account.getBalance();
+			
+			if (currentBalance.compareTo(transaction.getAmount()) != -1) {
+				account.setBalance(currentBalance.subtract(transaction.getAmount()));
+				accountRepository.save(account);
+				return true;
+			}
+		} 
+		return false;
 	}
 	
 }

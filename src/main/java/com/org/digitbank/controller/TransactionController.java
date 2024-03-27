@@ -39,4 +39,16 @@ public class TransactionController {
         
     	return ResponseEntity.ok(transactionRepository.save(transaction));
 	}
+	
+	@PostMapping("/bank/withdraw")
+	public ResponseEntity<?> withdraw(@Valid @RequestBody TransactionRequest transactionRequest) {
+		System.out.println("withdraw");
+        Transaction transaction = Transaction.builder().amount(transactionRequest.getAmount()).fromAccountId(transactionRequest.getFromAccountId()).toAccountId(null).transactionType(TransactionType.WITHDRAW).build();
+        
+        if (!transactionService.performWithdraw(transaction)) {
+    		return new ResponseEntity(new ApiResponse(false, "Withdraw Unsuccessful!"), HttpStatus.BAD_REQUEST);
+        }
+        
+    	return ResponseEntity.ok(transactionRepository.save(transaction));
+	}
 }

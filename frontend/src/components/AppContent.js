@@ -7,6 +7,7 @@ import NavigationMenu from "./NavigationMenu";
 import AuthForm from "./AuthForm";
 import AccountContent from "./AccountContent";
 import DepositForm from "./DepositForm";
+import WithdrawForm from "./WithdrawForm";
 
 function AppContent() {
   const [componentToShow, setComponentToShow] = useState("login");
@@ -76,15 +77,30 @@ function AppContent() {
         console.log("Create Savings: Success");
         console.log(response.data);
 
-        setAccounts(prevAccounts => [...prevAccounts, response.data]);
+        setAccounts((prevAccounts) => [...prevAccounts, response.data]);
         setComponentToShow("account");
-
       })
       .catch((error) => {
         console.log("Create Savings: Fail");
         console.error("Error creating savings account:", error);
+      });
+  };
+
+  // Withdraw funds into an account.
+  const withdrawHandler = (account, amount) => {
+    request("POST", "/bank/withdraw", {
+      fromAccountId: account.accountId,
+      amount: amount,
+    })
+      .then((response) => {
+        console.log("Withdraw: Success");
+        setComponentToShow("home");
       })
-  }
+      .catch((error) => {
+        console.log("Withdraw: Fail");
+        console.error("Error withdrawing funds from account:", error);
+      });
+  };
 
   // Deposit funds into an account.
   const depositHandler = (account, amount) => {
@@ -99,8 +115,8 @@ function AppContent() {
       .catch((error) => {
         console.log("Deposit: Fail");
         console.error("Error depositing funds into account:", error);
-      })
-  }
+      });
+  };
 
   // Fetch account data using the authenticated token.
   const fetchAccountData = () => {
@@ -108,7 +124,7 @@ function AppContent() {
       .then((response) => {
         console.log("Fetch accounts: Success");
         console.log(response.data);
-        
+
         setAccounts(response.data);
       })
       .catch((error) => {
@@ -119,7 +135,7 @@ function AppContent() {
 
   // Change component based on navigation menu item click.
   const navigationHandler = (navMenu) => {
-    setComponentToShow(navMenu)
+    setComponentToShow(navMenu);
   };
 
   return (
@@ -129,12 +145,24 @@ function AppContent() {
       ) : (
         <>
           <NavigationMenu onNavItemClick={navigationHandler} />
-          {componentToShow === "home" && <HomeContent createSavings={createSavingsHandler} />}
-          {componentToShow === "account" && <AccountContent accounts={accounts} />}
-          {componentToShow === "deposit" && <DepositForm onDeposit={depositHandler} accounts={accounts} />}
-          {componentToShow === "withdraw" && <AccountContent accounts={accounts} />}
-          {componentToShow === "transfer" && <AccountContent accounts={accounts} />}
-          {componentToShow === "zelle" && <AccountContent accounts={accounts} />}
+          {componentToShow === "home" && (
+            <HomeContent createSavings={createSavingsHandler} />
+          )}
+          {componentToShow === "account" && (
+            <AccountContent accounts={accounts} />
+          )}
+          {componentToShow === "deposit" && (
+            <DepositForm onDeposit={depositHandler} accounts={accounts} />
+          )}
+          {componentToShow === "withdraw" && (
+            <WithdrawForm onWithdraw={withdrawHandler} accounts={accounts} />
+          )}
+          {componentToShow === "transfer" && (
+            <AccountContent accounts={accounts} />
+          )}
+          {componentToShow === "zelle" && (
+            <AccountContent accounts={accounts} />
+          )}
         </>
       )}
     </>
