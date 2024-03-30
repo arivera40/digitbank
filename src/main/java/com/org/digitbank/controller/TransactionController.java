@@ -27,28 +27,42 @@ import lombok.RequiredArgsConstructor;
 public class TransactionController {
 	private final TransactionRepository transactionRepository;
 	private final TransactionService transactionService;
-	
+
 	@PostMapping("/bank/deposit")
 	public ResponseEntity<?> deposit(@Valid @RequestBody TransactionRequest transactionRequest) {
 		System.out.println("deposit");
-        Transaction transaction = Transaction.builder().amount(transactionRequest.getAmount()).fromAccountId(null).toAccountId(transactionRequest.getToAccountId()).transactionType(TransactionType.DEPOSIT).build();
-        
-        if (!transactionService.performDeposit(transaction)) {
-    		return new ResponseEntity(new ApiResponse(false, "Deposit Unsuccessful!"), HttpStatus.BAD_REQUEST);
-        }
-        
-    	return ResponseEntity.ok(transactionRepository.save(transaction));
+		Transaction transaction = Transaction.builder().amount(transactionRequest.getAmount()).fromAccountId(null)
+				.toAccountId(transactionRequest.getToAccountId()).transactionType(TransactionType.DEPOSIT).build();
+
+		if (!transactionService.performDeposit(transaction)) {
+			return new ResponseEntity(new ApiResponse(false, "Deposit Unsuccessful!"), HttpStatus.BAD_REQUEST);
+		}
+		return ResponseEntity.ok(transactionRepository.save(transaction));
 	}
-	
+
 	@PostMapping("/bank/withdraw")
 	public ResponseEntity<?> withdraw(@Valid @RequestBody TransactionRequest transactionRequest) {
 		System.out.println("withdraw");
-        Transaction transaction = Transaction.builder().amount(transactionRequest.getAmount()).fromAccountId(transactionRequest.getFromAccountId()).toAccountId(null).transactionType(TransactionType.WITHDRAW).build();
-        
-        if (!transactionService.performWithdraw(transaction)) {
-    		return new ResponseEntity(new ApiResponse(false, "Withdraw Unsuccessful!"), HttpStatus.BAD_REQUEST);
-        }
-        
-    	return ResponseEntity.ok(transactionRepository.save(transaction));
+		Transaction transaction = Transaction.builder().amount(transactionRequest.getAmount())
+				.fromAccountId(transactionRequest.getFromAccountId()).toAccountId(null)
+				.transactionType(TransactionType.WITHDRAW).build();
+
+		if (!transactionService.performWithdraw(transaction)) {
+			return new ResponseEntity(new ApiResponse(false, "Withdraw Unsuccessful!"), HttpStatus.BAD_REQUEST);
+		}
+		return ResponseEntity.ok(transactionRepository.save(transaction));
+	}
+
+	@PostMapping("/bank/transfer")
+	public ResponseEntity<?> transfer(@Valid @RequestBody TransactionRequest transactionRequest) {
+		System.out.println("transfer");
+		Transaction transaction = Transaction.builder().amount(transactionRequest.getAmount())
+				.fromAccountId(transactionRequest.getFromAccountId()).toAccountId(transactionRequest.getToAccountId())
+				.transactionType(TransactionType.TRANSFER).build();
+		
+		if (!transactionService.performTransfer(transaction)) {
+			return new ResponseEntity(new ApiResponse(false, "Transfer Unsuccessful!"), HttpStatus.BAD_REQUEST);
+		}
+		return ResponseEntity.ok(transactionRepository.save(transaction));
 	}
 }

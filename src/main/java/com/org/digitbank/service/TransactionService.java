@@ -64,4 +64,29 @@ public class TransactionService {
 		return false;
 	}
 	
+	public boolean performTransfer(Transaction transaction) {
+		System.out.println(transaction.getAmount());
+		System.out.println(transaction.getFromAccountId());
+		System.out.println(transaction.getToAccountId());
+		Optional<Account> optionalFromAccount = accountRepository.findById(transaction.getFromAccountId());
+		Optional<Account> optionalToAccount = accountRepository.findById(transaction.getToAccountId());
+		
+		if (optionalFromAccount.isPresent() && optionalToAccount.isPresent()) {
+			Account fromAccount = optionalFromAccount.get();
+			Account toAccount = optionalToAccount.get();
+			
+			BigDecimal currentFromBalance = fromAccount.getBalance();
+			BigDecimal currentToBalance = toAccount.getBalance();
+			
+			if (currentFromBalance.compareTo(transaction.getAmount()) != -1) {
+				fromAccount.setBalance(currentFromBalance.subtract(transaction.getAmount()));
+				toAccount.setBalance(currentToBalance.add(transaction.getAmount()));
+				accountRepository.save(fromAccount);
+				accountRepository.save(toAccount);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

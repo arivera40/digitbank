@@ -8,6 +8,7 @@ import AuthForm from "./AuthForm";
 import AccountContent from "./AccountContent";
 import DepositForm from "./DepositForm";
 import WithdrawForm from "./WithdrawForm";
+import TransferForm from "./TransferForm";
 
 function AppContent() {
   const [componentToShow, setComponentToShow] = useState("login");
@@ -86,6 +87,22 @@ function AppContent() {
       });
   };
 
+  // Deposit funds into an account.
+  const depositHandler = (account, amount) => {
+    request("POST", "/bank/deposit", {
+      toAccountId: account.accountId,
+      amount: amount,
+    })
+      .then((response) => {
+        console.log("Deposit: Success");
+        setComponentToShow("home");
+      })
+      .catch((error) => {
+        console.log("Deposit: Fail");
+        console.error("Error depositing funds into account:", error);
+      });
+  };
+
   // Withdraw funds into an account.
   const withdrawHandler = (account, amount) => {
     request("POST", "/bank/withdraw", {
@@ -102,19 +119,20 @@ function AppContent() {
       });
   };
 
-  // Deposit funds into an account.
-  const depositHandler = (account, amount) => {
-    request("POST", "/bank/deposit", {
-      toAccountId: account.accountId,
+  // Transfer funds into an account.
+  const transferHandler = (fromAccount, toAccount, amount) => {
+    request("POST", "/bank/transfer", {
+      fromAccountId: fromAccount.accountId,
+      toAccountId: toAccount.accountId,
       amount: amount,
     })
       .then((response) => {
-        console.log("Deposit: Success");
+        console.log("Transfer: Success");
         setComponentToShow("home");
       })
       .catch((error) => {
-        console.log("Deposit: Fail");
-        console.error("Error depositing funds into account:", error);
+        console.log("Transfer: Fail");
+        console.error("Error tranfering funds from/to account:", error);
       });
   };
 
@@ -158,7 +176,7 @@ function AppContent() {
             <WithdrawForm onWithdraw={withdrawHandler} accounts={accounts} />
           )}
           {componentToShow === "transfer" && (
-            <AccountContent accounts={accounts} />
+            <TransferForm onTransfer={transferHandler} accounts={accounts} />
           )}
           {componentToShow === "zelle" && (
             <AccountContent accounts={accounts} />

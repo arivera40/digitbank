@@ -8,7 +8,8 @@ import { FormStyle } from "../styles/FormStyle";
 
 function DepositForm({ onDeposit, accounts }) {
   const schema = yup.object().shape({
-    amount: yup.string().required(),
+    account: yup.string().required("Please select an account"),
+    amount: yup.string().required("Please enter an amount to deposit"),
   });
 
   const {
@@ -34,9 +35,10 @@ function DepositForm({ onDeposit, accounts }) {
               </label>
               <select
                 className="form-control"
-                defaultValue={0}
+                defaultValue=""
                 {...register("account")}
               >
+                <option value="">Choose an account</option>
                 {accounts.map((account, index) => (
                   <option key={index} value={index}>
                     {account.accountType}
