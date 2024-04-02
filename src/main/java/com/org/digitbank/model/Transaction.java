@@ -1,6 +1,7 @@
 package com.org.digitbank.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,4 +31,6 @@ public class Transaction {
 	
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
+	
+	private LocalDate transactionDate;
 }

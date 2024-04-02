@@ -2,7 +2,13 @@ import React from "react";
 import Account from "./Account";
 import { AccountStyle } from "../styles/AccountStyle";
 
-function AccountContent({ accounts }) {
+function AccountContent({ accounts, getTransactions }) {
+
+  const handleAccountClick = (accountId) => {
+    console.log(accountId);
+    getTransactions(accountId);
+  }
+
   return (
     <AccountStyle>
       <div className="row justify-content-center">
@@ -22,6 +28,7 @@ function AccountContent({ accounts }) {
                   role="tab"
                   aria-controls={`account-${index}`}
                   aria-selected="true"
+                  onClick={() => handleAccountClick(account.accountId)}
                 >
                   <Account account={account} />
                 </a>

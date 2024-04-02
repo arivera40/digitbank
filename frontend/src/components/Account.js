@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { AccountStyle } from "../styles/AccountStyle";
 
@@ -10,10 +10,10 @@ function Account({ account }) {
 
   return (
     <AccountStyle>
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">TOTAL {account.accountType}</h5>
-          <p class="card-text">{formattedBalance}</p>
+      <div className="card">
+        <div className="card-body">
+          <h5 className="card-title">TOTAL {account.accountType}</h5>
+          <p className="card-text">{formattedBalance}</p>
           <p>Available balance</p>
         </div>
       </div>

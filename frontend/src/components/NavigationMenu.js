@@ -22,7 +22,7 @@ function NavigationMenu({ onNavItemClick }) {
           <a className="nav-item nav-link active" href="#" onClick={() => onNavItemClick("home")}>
             Home
           </a>
-          <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("account")}>
+          <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("accounts")}>
             Account
           </a>
           <a className="nav-item nav-link" href="#" onClick={() => onNavItemClick("deposit")}>

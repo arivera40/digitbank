@@ -9,10 +9,13 @@ import AccountContent from "./AccountContent";
 import DepositForm from "./DepositForm";
 import WithdrawForm from "./WithdrawForm";
 import TransferForm from "./TransferForm";
+import TransactionContent from "./TransactionContent";
 
 function AppContent() {
   const [componentToShow, setComponentToShow] = useState("login");
   const [accounts, setAccounts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [accountId, setAccountId] = useState(null);
 
   useEffect(() => {
     if (componentToShow === "home") {
@@ -79,7 +82,7 @@ function AppContent() {
         console.log(response.data);
 
         setAccounts((prevAccounts) => [...prevAccounts, response.data]);
-        setComponentToShow("account");
+        setComponentToShow("accounts");
       })
       .catch((error) => {
         console.log("Create Savings: Fail");
@@ -136,7 +139,7 @@ function AppContent() {
       });
   };
 
-  // Fetch account data using the authenticated token.
+  // Fetch user accounts using JWT token.
   const fetchAccountData = () => {
     request("GET", "/bank/getAccounts")
       .then((response) => {
@@ -150,6 +153,26 @@ function AppContent() {
         console.error("Error fetching account data:", error);
       });
   };
+
+  // Fetch account transactions using account id.
+  const fetchTransactionData = (accountId) => {
+    request("POST", "/bank/getTransactions", {
+      accountId: accountId,
+    })
+      .then((response) => {
+        console.log("Fetch transactions: Success");
+        
+        setTransactions(response.data.reverse());
+        setAccountId(accountId);
+        console.log(transactions);
+        console.log(accountId);
+        setComponentToShow("transactions");
+      })
+      .catch((error) => {
+        console.log("Fetch transactions: Fail");
+        console.error("Error fetching transaction data:", error);
+      })
+  }
 
   // Change component based on navigation menu item click.
   const navigationHandler = (navMenu) => {
@@ -166,8 +189,11 @@ function AppContent() {
           {componentToShow === "home" && (
             <HomeContent createSavings={createSavingsHandler} />
           )}
-          {componentToShow === "account" && (
-            <AccountContent accounts={accounts} />
+          {componentToShow === "accounts" && (
+            <AccountContent getTransactions={fetchTransactionData} accounts={accounts} />
+          )}
+          {componentToShow === "transactions" && (
+            <TransactionContent accountId={accountId} transactions={transactions} />
           )}
           {componentToShow === "deposit" && (
             <DepositForm onDeposit={depositHandler} accounts={accounts} />
