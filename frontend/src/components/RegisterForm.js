@@ -10,7 +10,7 @@ function RegisterForm({ onRegister }) {
     firstName: yup.string().required(),
     lastName: yup.string().required(),
     email: yup.string().email().required(),
-    phoneNumber: yup.string(),
+    phoneNumber: yup.string().required(),
     password: yup.string().min(4).max(20).required(),
     confirmPassword: yup
       .string()

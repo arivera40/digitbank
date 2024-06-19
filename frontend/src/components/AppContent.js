@@ -9,17 +9,22 @@ import AccountContent from "./AccountContent";
 import DepositForm from "./DepositForm";
 import WithdrawForm from "./WithdrawForm";
 import TransferForm from "./TransferForm";
+import ZelleContent from "./ZelleContent";
+import ContactForm from "./ContactForm";
 import TransactionContent from "./TransactionContent";
 
 function AppContent() {
   const [componentToShow, setComponentToShow] = useState("login");
   const [accounts, setAccounts] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [accountId, setAccountId] = useState(null);
+  const [contact, setContact] = useState(null);
 
   useEffect(() => {
     if (componentToShow === "home") {
       fetchAccountData();
+      fetchContactData();
     }
   }, [componentToShow]);
 
@@ -139,6 +144,40 @@ function AppContent() {
       });
   };
 
+  // Creates Zelle contact in users contact list.
+  const contactCreateHandler = (contactName, email, phoneNumber) => {
+    request("POST", "/bank/createContact", {
+      contactName: contactName,
+      email: email,
+      phoneNumber: phoneNumber
+    })
+      .then((response) => {
+        console.log("Create Contact: Success");
+        setComponentToShow("zelle");
+      })
+      .catch((error) => {
+        console.log("Create Contact: Fail");
+        console.error("Error creating Zelle contact:", error);
+      });
+  };
+
+  const contactUpdateHandler = (contactId, contactName, email, phoneNumber) => {
+    request("POST", "/bank/updateContact", {
+      contactId: contactId,
+      contactName: contactName,
+      email: email,
+      phoneNumber: phoneNumber
+    })
+      .then((response) => {
+        console.log("Update Contact: Success");
+        setComponentToShow("zelle");
+      })
+      .catch((error) => {
+        console.log("Update Contact: Fail");
+        console.error("Error updating Zelle contact:", error);
+      })
+  }
+
   // Fetch user accounts using JWT token.
   const fetchAccountData = () => {
     request("GET", "/bank/getAccounts")
@@ -153,6 +192,21 @@ function AppContent() {
         console.error("Error fetching account data:", error);
       });
   };
+
+  // Fetch user contacts using JWT token.
+  const fetchContactData = () => {
+    request("GET", "/bank/getContacts")
+      .then((response) => {
+        console.log("Fetch contacts: Success");
+        console.log(response.data);
+
+        setContacts(response.data);
+      })
+      .catch((error) => {
+        console.log("Fetch contacts: Fail");
+        console.error("Error fetching account data:", error);
+      })
+  }
 
   // Fetch account transactions using account id.
   const fetchTransactionData = (accountId) => {
@@ -175,8 +229,16 @@ function AppContent() {
   }
 
   // Change component based on navigation menu item click.
-  const navigationHandler = (navMenu) => {
-    setComponentToShow(navMenu);
+  const navigationHandler = (navSelection) => {
+    console.log("Hello world");
+    setComponentToShow(navSelection);
+  };
+
+  const setContactSwitchComponent = (selectedContact, newComponentToShow) => {
+    console.log(selectedContact);
+    console.log(newComponentToShow);
+    setContact(selectedContact);
+    setComponentToShow(newComponentToShow);
   };
 
   return (
@@ -205,8 +267,17 @@ function AppContent() {
             <TransferForm onTransfer={transferHandler} accounts={accounts} />
           )}
           {componentToShow === "zelle" && (
-            <AccountContent accounts={accounts} />
+            <ZelleContent onNavItemClick={setContactSwitchComponent} contacts={contacts} />
           )}
+          {componentToShow === "addContact" && (
+            <ContactForm contact={null} onContactCreate={contactCreateHandler} />
+          )}
+          {componentToShow === "editContact" && (
+            <ContactForm contact={contact} onContactCreate={contactCreateHandler} />
+          )}
+          {/* {componentToShow === "zelleTransfer" && (
+            <ContactForm contact={contact} onContactCreate={contactCreateHandler} />
+          )} */}
         </>
       )}
     </>

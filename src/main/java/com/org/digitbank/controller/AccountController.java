@@ -24,10 +24,10 @@ public class AccountController {
 	private final JwtService jwtService;
 	
 	@RequestMapping("/bank/getAccounts")
-    public ResponseEntity<List<Account>> getAccounts(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<List<Account>> getAccounts(@RequestHeader("Authorization") String authHeader) {
 		System.out.println("getAccounts");
         // Extract JWT token from Authorization header
-        String jwtToken = authorizationHeader.substring(7);
+        String jwtToken = authHeader.substring(7);
         
         // Extract user id from JWT token
         Integer userId = jwtService.extractClaim(jwtToken, claims -> claims.get("userId", Integer.class));
@@ -42,10 +42,10 @@ public class AccountController {
 	}
 	
 	@PostMapping("bank/createSavings")
-	public ResponseEntity<Account> createSavings(@RequestHeader("Authorization") String authorizationHeader) {
+	public ResponseEntity<Account> createSavings(@RequestHeader("Authorization") String authHeader) {
 		System.out.println("createSavings");
 		// Extract JWT token from Authorization header
-        String jwtToken = authorizationHeader.substring(7);
+        String jwtToken = authHeader.substring(7);
         
         // Extract user id from JWT token
         Integer userId = jwtService.extractClaim(jwtToken, claims -> claims.get("userId", Integer.class));

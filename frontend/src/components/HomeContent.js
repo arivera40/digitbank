@@ -22,9 +22,9 @@ function HomeContent({ createSavings }) {
             </ul>
           </div>
         </div>
-        <div class="media">
-          <div class="media-body">
-            <h5 class="mt-0">Digitbank Savings</h5>
+        <div className="media">
+          <div className="media-body">
+            <h5 className="mt-0">Digitbank Savings</h5>
             <p>
               Digitbank now works even harder for you with a new Savings
               account. Grow your Daily Cash over time at 4.50% APY when you open
@@ -32,7 +32,7 @@ function HomeContent({ createSavings }) {
             </p>
             <button
               type="button"
-              class="btn btn-primary btn-lg"
+              className="btn btn-primary btn-lg"
               onClick={() => createSavings()}
             >
               Apply
