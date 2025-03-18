@@ -84,7 +84,7 @@ public class AuthenticationController {
 
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-		var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+		User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
 		String jwt = jwtService.generateToken(user);
 
 		System.out.println("(login) JWT Token: " + jwt);

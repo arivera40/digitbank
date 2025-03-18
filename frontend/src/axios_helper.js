@@ -1,11 +1,12 @@
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://localhost:8080/digitbank'
-axios.defaults.headers.post["Content-type"] = 'application/json'
+const baseURL = process.env.REACT_APP_API_URL || 'http://35.226.140.244/digitbank';
+
+axios.defaults.baseURL = baseURL;
+axios.defaults.headers.post["Content-type"] = 'application/json';
 
 export const getAuthToken = () => {
     const token = window.localStorage.getItem('accessToken');
-    console.log("Token:", token); // Add this line for debugging
     return token;
 }
 

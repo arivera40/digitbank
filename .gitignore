@@ -1,0 +1,18 @@
+# Ignore Node.js dependencies & build files (Frontend)
+node_modules/
+.next/
+.env.local
+.vercel/
+.turbo/
+
+# Ignore Java/IDE files (Backend)
+target/
+*.log
+*.class
+.classpath
+.factorypath
+.project
+.settings/
+
+# Ignore system-generated files
+.DS_Store
